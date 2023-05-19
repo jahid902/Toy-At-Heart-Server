@@ -60,11 +60,27 @@ async function run() {
       if(email){
           query = {email : email}
       }
-      const result = await toysCollection.find(query).toArray()
+      const result = await toysCollection.find(query).sort({price : -1}).toArray()
       res.send(result);
     })
 
-      // Db toy delete route
+
+    app.patch("/updateToy/:id", async (req, res) => {
+      const id = req.params.id;
+      const body = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updatedToy = {
+        $set: {
+          price: body.price,
+          quantity: body.quantity,
+          description: body.description
+        },
+      };
+      const result = await toysCollection.updateOne(query, updatedToy);
+      res.send(result);
+    });
+
+    // Db toy delete route
 
     app.delete('/toyDlt/:id', async (req, res) => {
       const id = req.params.id;
