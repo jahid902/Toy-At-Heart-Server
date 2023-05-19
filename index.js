@@ -27,6 +27,12 @@ async function run() {
   try {
     await client.connect();
     const toysCollection = client.db('allToys').collection('Toy');
+
+    // indexing for search
+
+    const indexKeys = { toyName: 1, category: 1 };
+    const indexOptions = { name: "toyNameCategory" };
+    const result = await toysCollection.createIndex(indexKeys, indexOptions);
     
     // single toy post route
 
@@ -39,7 +45,8 @@ async function run() {
     // all toy get route
 
     app.get('/allToys', async(req,res) =>{
-      const toys = await toysCollection.find({}).toArray();
+      const toys = await toysCollection.find({}).limit(20).toArray();
+      // added limit to 20 for toys get operation 
       res.send(toys);
     })
 
@@ -64,6 +71,7 @@ async function run() {
       res.send(result);
     })
 
+    // update toy patch route
 
     app.patch("/updateToy/:id", async (req, res) => {
       const id = req.params.id;
@@ -77,6 +85,21 @@ async function run() {
         },
       };
       const result = await toysCollection.updateOne(query, updatedToy);
+      res.send(result);
+    });
+
+    // Search route for all toys
+
+    app.get("/toyText/:text", async (req, res) => {
+      const text = req.params.text;
+      const result = await toysCollection
+        .find({
+          $or: [
+            { toyName: { $regex: text, $options: "i" } },
+            { category: { $regex: text, $options: "i" } },
+          ],
+        })
+        .toArray();
       res.send(result);
     });
 
