@@ -51,10 +51,33 @@ async function run() {
       const toy = await toysCollection.findOne(query);
       res.send(toy);
     })
+
+    // Email users posted toy data get route
+
+    app.get("/toys", async (req,res)=>{
+      const email = req.query?.email;
+      let query = {};
+      if(email){
+          query = {email : email}
+      }
+      const result = await toysCollection.find(query).toArray()
+      res.send(result);
+    })
+
+      // Db toy delete route
+
+    app.delete('/toyDlt/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await toysCollection.deleteOne(query);
+      res.send(result);
+  })
+
+
     
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    
+
   } finally {  
     // await client.close();
   }
