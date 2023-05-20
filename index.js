@@ -59,6 +59,19 @@ async function run() {
       res.send(toy);
     })
 
+    // get route for category wise data loading
+
+    app.get("/toysCategory/:category", async (req, res) => {
+      console.log(req.params.category);
+      const toys = await toysCollection
+        .find({
+          category: req.params.category,
+        })
+        .limit(2)
+        .toArray();
+      res.send(toys);
+    });
+
     // Email users posted toy data get route
 
     app.get("/toys", async (req,res)=>{
