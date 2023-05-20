@@ -25,7 +25,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+     client.connect();
     const toysCollection = client.db('allToys').collection('Toy');
 
     // indexing for search
@@ -67,6 +67,7 @@ async function run() {
           category: req.params.category,
         })
         .limit(2)
+        .sort({quantity: 1})
         .toArray();
       res.send(toys);
     });
