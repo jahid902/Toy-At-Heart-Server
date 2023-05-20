@@ -62,7 +62,6 @@ async function run() {
     // get route for category wise data loading
 
     app.get("/toysCategory/:category", async (req, res) => {
-      console.log(req.params.category);
       const toys = await toysCollection
         .find({
           category: req.params.category,
